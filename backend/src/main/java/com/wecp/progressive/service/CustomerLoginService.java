@@ -33,15 +33,15 @@ public class CustomerLoginService implements UserDetailsService {
     public Optional<Customers> getUserById(Integer userId) {
         return customerRepository.findById(userId);
     }
-    public Customers getUserByName(String useString)
-    {
+
+    public Customers getUserByName(String useString) {
         Customers oldUser = customerRepository.findByUsername(useString);
         return oldUser;
     }
+
     public Customers createUser(Customers user) {
         Customers oldUser = customerRepository.findByUsername(user.getUsername());
-        if(oldUser != null)
-        {
+        if (oldUser != null) {
             throw new CustomerAlreadyExistsException("User name Is Unavailable: " + user.getUsername());
 
         }
@@ -50,10 +50,13 @@ public class CustomerLoginService implements UserDetailsService {
     }
 
     public Customers updateUser(Customers user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         return customerRepository.save(user);
     }
 
     public void deleteUser(Integer id) {
+
         customerRepository.deleteById(id);
     }
 
@@ -63,11 +66,11 @@ public class CustomerLoginService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
-
+        // ArrayList<String> role = new ArrayList<>();
+        // role.add(user.getRole());
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
-                new ArrayList<>()
-        );
+                new ArrayList<>());
     }
 }
